@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Calculator</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        /* Add your custom styles here */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="mb-4">Transaction Calculator</h2>
+
+    <!-- Form for user input -->
+    <form id="transactionForm">
+        <div class="form-group">
+            <label for="inputData">Enter Transaction Data:</label>
+            <textarea class="form-control" id="inputData" name="input" rows="5" placeholder="Paste formatted data here"></textarea>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="calculateTotal()">Calculate</button>
+        <button type="button" class="btn btn-secondary" onclick="clearInput()">Clear</button>
+    </form>
+
+    <!-- Display results -->
+    <div id="results" style="display: none;">
+        <h3 class="mt-4">Results:</h3>
+        <ul id="resultsList"></ul>
+    </div>
+</div>
+
+<!-- Add Bootstrap JS and jQuery scripts -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<script>
+    function calculateTotal() {
+    var inputData = document.getElementById("inputData").value;
+
+    // Implement logic to send input data to the server (or process it directly in JavaScript)
+    // For now, just a dummy implementation
+    var { customerTotals, customerCounts } = calculateTotals(inputData);
+
+    // Display results
+    displayResults(customerTotals, customerCounts);
+}
+
+function calculateTotals(inputData) {
+    // Split input data into transactions
+    var transactions = inputData.split('\n');
+
+    // Dictionary to store customer-wise total amount and transaction count
+    var customerTotals = {};
+    var customerCounts = {};
+
+    // Process each transaction
+    for (var i = 0; i < transactions.length; i += 6) {  // Each transaction has 6 lines
+        if (i + 4 < transactions.length) {  // Check if index exists for customer and amount
+            var customer = transactions[i + 3];  // Customer name is on the fourth line
+            var amount_str = transactions[i + 5].replace('฿', '').replace(/,/g, '');  // Extract amount and remove currency symbol and commas
+            var amount = parseFloat(amount_str);
+
+            // Update customer's total amount and transaction count
+            if (!customerTotals[customer]) {
+                customerTotals[customer] = 0;
+                customerCounts[customer] = 0;
+            }
+
+            customerTotals[customer] += amount;
+            customerCounts[customer]++;
+        }
+    }
+
+    // Return the result
+    return { customerTotals, customerCounts };
+}
+
+// Rest of your code remains the same
+
+
+
+
+function displayResults(customerTotals, customerCounts) {
+    var resultsList = document.getElementById("resultsList");
+    resultsList.innerHTML = "";
+
+    for (var customer in customerTotals) {
+        var listItem = document.createElement("li");
+        listItem.innerHTML = customer + ": ฿" + customerTotals[customer].toFixed(2) + " (ขายไป " + customerCounts[customer] + " รายการ)";
+        resultsList.appendChild(listItem);
+    }
+
+    document.getElementById("results").style.display = "block";
+}
+
+
+    function clearInput() {
+        document.getElementById("inputData").value = "";
+        document.getElementById("results").style.display = "none";
+    }
+</script>
+
+</body>
+</html>
